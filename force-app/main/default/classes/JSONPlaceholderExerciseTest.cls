@@ -30,6 +30,44 @@ public class JSONPlaceholderExerciseTest {
         Assert.areEqual(101, responseMap.get('id'), 'New post should have ID 101');
         Assert.areEqual('New Post', responseMap.get('title'), 'Post title should match the request');
     }
+
+    @IsTest
+    static void testCreatePostBulk() {
+        // Arrange
+        Test.setMock(HttpCalloutMock.class, new JSONPlaceholderMock(201, JSONPlaceholderMock.getSampleBULKResponse()));
+       
+        // Act
+        List<Map<String, Object>> posts = new List<Map<String, Object>> ();
+        Map<String, Object> post1 = new Map<String, Object> ();
+        post1.put('title', 'New Post');
+        post1.put('description', 'This is a new post');
+        post1.put('id', 1);
+
+        Map<String, Object> post2 = new Map<String, Object> ();
+        post2.put('title', 'New Post2');
+        post2.put('description', 'This is a new post2');
+        post2.put('id', 2);
+
+        posts.add(post1);
+        posts.add(post2);
+   
+        
+        List<String> responses = JSONPlaceholderExercise.createPostBulk(posts);
+        
+        System.assertNotEquals(null, responses, 'Responses should not be null');
+        System.assertEquals(2, responses.size(), 'There should be 2 responses');
+        
+        List<Object> responseObjects = (List<Object>)JSON.deserializeUntyped(responses[0]);
+        System.assertEquals(2, responseObjects.size(), 'Response should contain 2 posts');
+        
+        Map<String, Object> firstPost = (Map<String, Object>)responseObjects[0];
+        System.assertEquals(101, firstPost.get('id'), 'First post should have ID 101');
+        System.assertEquals('New Post', firstPost.get('title'), 'First post title should match');
+        
+        Map<String, Object> secondPost = (Map<String, Object>)responseObjects[1];
+        System.assertEquals(102, secondPost.get('id'), 'Second post should have ID 102');
+        System.assertEquals('New Post2', secondPost.get('title'), 'Second post title should match');
+    }
     
     @IsTest
     static void testUpdatePost() {
