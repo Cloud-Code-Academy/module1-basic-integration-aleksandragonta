@@ -50,21 +50,23 @@ public class JSONPlaceholderExerciseTest {
 
         posts.add(post1);
         posts.add(post2);
-
+   
+        
         List<String> responses = JSONPlaceholderExercise.createPostBulk(posts);
         
-        // Assert
         System.assertNotEquals(null, responses, 'Responses should not be null');
         System.assertEquals(2, responses.size(), 'There should be 2 responses');
-        //Here are the problems , no idea how it should be done correctly
-       /* List<Map<String, Object>>  responseList = (List<Map<String, Object>> ) JSON.deserializeUntyped(responses[0]);
-        Map<String, Object> firstPost = responseList[0];
-        System.assertEquals(101, firstPost.get('id'), 'New post should have ID 101');
-        System.assertEquals('New Post', firstPost.get('title'), 'Post title should match the request');
-
-        Map<String, Object> secondPost = responseList[1];
-        System.assertEquals(102, secondPost.get('id'), 'New post should have ID 102');
-        System.assertEquals('New Post2', secondPost.get('title'), 'Post title should match the request');*/
+        
+        List<Object> responseObjects = (List<Object>)JSON.deserializeUntyped(responses[0]);
+        System.assertEquals(2, responseObjects.size(), 'Response should contain 2 posts');
+        
+        Map<String, Object> firstPost = (Map<String, Object>)responseObjects[0];
+        System.assertEquals(101, firstPost.get('id'), 'First post should have ID 101');
+        System.assertEquals('New Post', firstPost.get('title'), 'First post title should match');
+        
+        Map<String, Object> secondPost = (Map<String, Object>)responseObjects[1];
+        System.assertEquals(102, secondPost.get('id'), 'Second post should have ID 102');
+        System.assertEquals('New Post2', secondPost.get('title'), 'Second post title should match');
     }
     
     @IsTest
